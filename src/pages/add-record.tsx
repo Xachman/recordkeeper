@@ -1,8 +1,9 @@
-import { Box, Container, FormControl, Grid, Input, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import Database from "@/Database";
+import { Box, Button, Container, FormControl, Grid, Input, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { DatePicker, DateTimeField, DateTimePicker, LocalizationProvider, MobileDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
-import { ReactNode, useState } from "react";
+import { ChangeEvent, ReactNode, useState } from "react";
 
 const months = [
   { value: 0, label: 'January' },
@@ -21,23 +22,54 @@ const months = [
 
 const AddForm = () => {
   const currentMonthIndex = new Date().getMonth();
-  const [month, setMonth] = useState(0);
+  const [month, setMonth] = useState(currentMonthIndex);
+  const year = new Date().getFullYear();
+  const [daysInMonth, setDaysInMonth] = useState(new Date(year, month+1, 0).getDate());
+  console.log(daysInMonth)
+  const [day, setDay] = useState(new Date().getDate())
+  const [hours, setHours] = useState(0);
+  const [placements, setPlacements] = useState(0);
+  const [videos, setVideos] = useState(0);
+  const [studies, setStudies] = useState(0);
+  const [notes, setNotes] = useState("");
+  const [returnVisits, setReturnVisits] = useState(0);
+
+  const inputChangeEvent = (setter: (value: any) => void) => {
+    return (event: ChangeEvent<HTMLInputElement>) => {
+      setter(event.target.value)
+    }
+  }
   
   const handleMonthChange = (event: SelectChangeEvent) => {
-    setMonth(+event.target.value ?? currentMonthIndex)
+    const monthChange = +event.target.value ?? currentMonthIndex
+    setMonth(monthChange)
+    setDaysInMonth(new Date(year, monthChange+1, 0).getDate())
+    setDay(1)
+  }
+
+  const handleDayChange = (event: SelectChangeEvent) => {
+    setDay(+event.target.value)
   }
 
   return (
     <Box 
-      sx={{ display: 'flex', flexDirection: 'column' }}
+      sx={
+        { 
+          display: 'flex', 
+          flexDirection: 'column',
+          '& .MuiFormControl-root': {
+            mt: "1em",
+            mb: "1em"
+          }
+        }}
       >
       <FormControl>
-        <InputLabel htmlFor="hours">Hours</InputLabel>
+        <InputLabel htmlFor="Month">Month</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={month}
-          label="Age"
+          labelId="month"
+          id="month"
+          value={String(month)}
+          label="Month"
           onChange={handleMonthChange}
         >
           {months.map(month => (
@@ -47,26 +79,59 @@ const AddForm = () => {
           ))}
         </Select>
       </FormControl>
+      <FormControl>
+        <InputLabel htmlFor="day">Day</InputLabel>
+        <Select
+          labelId="day"
+          id="day"
+          value={String(day)}
+          label="Day"
+          onChange={handleDayChange}
+        >
+          {[...Array(daysInMonth)].map((e, i) => {
+            const day = i+1
+            return (
+            <MenuItem key={day} value={day}>
+              {day}
+            </MenuItem>
+          )})}
+        </Select>
+      </FormControl>
       
       <FormControl>
         <InputLabel htmlFor="hours">Hours</InputLabel>
-        <Input id="hours" />
+        <Input 
+        type="number"
+        onChange={inputChangeEvent(setHours)}
+        id="hours" />
       </FormControl>
       <FormControl>
         <InputLabel htmlFor="placements">Placements</InputLabel>
-        <Input id="placements" />
+        <Input 
+        type="number"
+        onChange={inputChangeEvent(setPlacements)}
+        id="placements" />
       </FormControl>
       <FormControl>
         <InputLabel htmlFor="videos">Videos</InputLabel>
-        <Input id="videos" />
+        <Input 
+        type="number"
+        onChange={inputChangeEvent(setVideos)}
+        id="videos" />
       </FormControl>
       <FormControl>
         <InputLabel htmlFor="studies">Studies</InputLabel>
-        <Input id="studies" />
+        <Input 
+        type="number"
+        onChange={inputChangeEvent(setStudies)}
+        id="studies" />
       </FormControl>
       <FormControl>
         <InputLabel htmlFor="return-visits">Return Visits</InputLabel>
-        <Input id="retun-visits" />
+        <Input 
+        type="number"
+        onChange={inputChangeEvent(setReturnVisits)}
+        id="retun-visits" />
       </FormControl>
       <FormControl>
         <InputLabel
@@ -74,8 +139,29 @@ const AddForm = () => {
         <Input 
           multiline
           rows={4}
+          type="number"
+          onChange={inputChangeEvent(setNotes)}
           id="notes" />
       </FormControl>
+      <Button
+        variant="contained"
+        onClick={() => {
+          const db = new Database()
+          console.log("pacements", placements)
+          console.log("videos", videos)
+          db.addRecord(
+            hours,
+            year,
+            month,
+            day,
+            placements,
+            videos,
+            studies, 
+            notes
+          )
+          window.location.href = "/"
+        }}
+      >Submit</Button>
     </Box>
   )
 }
@@ -87,7 +173,7 @@ export default function Home() {
         <Grid item md={4}>
         </Grid>
         <Grid item xs={12} md={4}>
-          <h1>Add Records</h1>
+          <h1>Add Record</h1>
           <AddForm/>
         </Grid>
         <Grid item md={4}>
