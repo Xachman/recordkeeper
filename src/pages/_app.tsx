@@ -6,7 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import theme from '../theme';
 import createEmotionCache from '../createEmotionCache';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, makeStyles } from '@mui/material';
 import { Add, Favorite, HomeMax, LocationCity, Restore } from '@mui/icons-material';
 
 
@@ -43,6 +43,11 @@ export default function MyApp(props: MyAppProps) {
         <BottomNavigation
           showLabels
           value={value}
+          sx={{
+            width: '100%',
+            position: 'fixed',
+            bottom: 0,
+          }}
           onChange={(event, newValue) => {
             setValue(newValue);
           }}
