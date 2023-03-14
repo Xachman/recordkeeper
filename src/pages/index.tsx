@@ -16,16 +16,6 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const AddForm = () => {
-  return (
-    <>
-      <FormControl>
-        <InputLabel htmlFor="hours">Hours</InputLabel>
-        <Input id="hours" />
-      </FormControl>
-    </>
-  )
-}
 
 export default function Home() {
   return (
@@ -34,8 +24,6 @@ export default function Home() {
         <Grid item xs={4}>
         </Grid>
         <Grid item xs={4}>
-          <h1>Add Record</h1>
-          <AddForm/>
         </Grid>
         <Grid item xs={4}>
         </Grid>
