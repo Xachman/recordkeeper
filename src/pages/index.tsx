@@ -24,6 +24,8 @@ export default function Home() {
         <Grid item xs={4}>
         </Grid>
         <Grid item xs={4}>
+          <h1>Hi</h1>
+          <p>more content here I like how fast this is</p>
         </Grid>
         <Grid item xs={4}>
         </Grid>
