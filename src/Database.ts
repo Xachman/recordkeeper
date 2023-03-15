@@ -14,7 +14,7 @@ export default class Database {
             console.error(`Database ${dbName} failed to open: ${event ?? 'error'}`);
         };
         openDbRequest.onupgradeneeded = (event: IDBVersionChangeEvent) => {
-            const db = event.target.result;
+            const db = (event.target as any).result;
             const store = db.createObjectStore("recordStore", { autoIncrement: true });
             store.createIndex("year", "year", { unique: false });
             store.createIndex("month", "month", { unique: false });
@@ -37,7 +37,7 @@ export default class Database {
         const dbName = this.dbName
         const openDbRequest = indexedDB.open(dbName, 1); // open database with version 1
         openDbRequest.onsuccess = (event) => {
-            const db = event.target.result;
+            const db = (event.target as any).result;
             console.log(`Database ${dbName} opened successfully.`);
             const transaction = db.transaction(["recordStore"], "readwrite");
             // report on the success of the transaction completing, when everything is done
@@ -104,11 +104,11 @@ export default class Database {
               reject('Failed to open database');
             };
             dbRequest.onsuccess = (event) => {
-              const db = event.target.result;
+              const db = (event.target as any).result;
               const transaction = db.transaction("recordStore", 'readonly');
               const objectStore = transaction.objectStore("recordStore");
               const records: any[] = [];
-              objectStore.openCursor().onsuccess = (event) => {
+              objectStore.openCursor().onsuccess = (event:any) => {
                 const cursor = event.target.result;
                 if (cursor) {
                   const record = cursor.value;

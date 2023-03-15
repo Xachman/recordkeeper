@@ -156,6 +156,7 @@ const AddForm = () => {
             day,
             placements,
             videos,
+            returnVisits,
             studies, 
             notes
           )
