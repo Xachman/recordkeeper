@@ -19,12 +19,6 @@ export default class Database {
             store.createIndex("year", "year", { unique: false });
             store.createIndex("month", "month", { unique: false });
             store.createIndex("day", "day", { unique: false });
-            store.createIndex("hours", "hours", { unique: false });
-            store.createIndex("placements", "placements", { unique: false });
-            store.createIndex("videos", "videos", { unique: false });
-            store.createIndex("studies", "studies", { unique: false });
-            store.createIndex("returnVisits", "returnVisits", { unique: false });
-            store.createIndex("notes", "notes", { unique: false });
             console.log(`Object store "recordStore" created successfully.`);
         };
     }
@@ -67,7 +61,7 @@ export default class Database {
                 placements: +placements,
                 videos: +videos,
                 returnVisits: +returnVisits,
-                sudies: +studies,
+                studies: +studies,
                 notes: notes
             })
 
@@ -88,6 +82,26 @@ export default class Database {
     }
 
     listRecords() {
-        
+        return new Promise<Array<any>>((resolve, reject) => {
+            const dbRequest = indexedDB.open(this.dbName, 1);
+            dbRequest.onerror = (event) => {
+              reject('Failed to open database');
+            };
+            dbRequest.onsuccess = (event) => {
+              const db = event.target.result;
+              const transaction = db.transaction("recordStore", 'readonly');
+              const objectStore = transaction.objectStore("recordStore");
+              const records: any[] = [];
+              objectStore.openCursor().onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                  records.push(cursor.value);
+                  cursor.continue();
+                } else {
+                  resolve(records);
+                }
+              };
+            };
+          });
     }
 }
