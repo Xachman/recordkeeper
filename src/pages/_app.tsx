@@ -7,7 +7,7 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import theme from '../theme';
 import createEmotionCache from '../createEmotionCache';
 import { BottomNavigation, BottomNavigationAction, Container, makeStyles } from '@mui/material';
-import { Add, Favorite, HomeMax, LocationCity, Restore } from '@mui/icons-material';
+import { Add, Favorite, Home, HomeMax, List, LocationCity, Restore } from '@mui/icons-material';
 import Database from '@/Database';
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -31,6 +31,9 @@ export default function MyApp(props: MyAppProps) {
         window.location.href = "/"
         break
       case 1:
+        window.location.href = "/list"
+        break
+      case 2:
         window.location.href = "/add-record"
         break
     }
@@ -63,7 +66,8 @@ export default function MyApp(props: MyAppProps) {
             setValue(newValue);
           }}
         >
-          <BottomNavigationAction label="Home" icon={<HomeMax />} />
+          <BottomNavigationAction label="Home" icon={<Home />} />
+          <BottomNavigationAction label="List" icon={<List />} />
           <BottomNavigationAction label="Add" icon={<Add />} />
         </BottomNavigation>
       </ThemeProvider>

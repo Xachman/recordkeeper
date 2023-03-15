@@ -166,7 +166,7 @@ const AddForm = () => {
   )
 }
 
-export default function Home() {
+export default function AddRecord() {
   return (
     <Container>
       <Grid container spacing={2}>

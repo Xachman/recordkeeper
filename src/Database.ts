@@ -78,7 +78,23 @@ export default class Database {
     }
 
     deleteRecord(id:number) {
-
+        const dbName = this.dbName
+        const openDbRequest = indexedDB.open(dbName, 1); // open database with version 1
+        openDbRequest.onsuccess = (event) => {
+            const db = (event.target as any).result;
+            const transaction = db.transaction(["recordStore"], "readwrite");
+            const objectStore = transaction.objectStore('recordStore');
+            
+            const deleteRequest = objectStore.delete(id); // assuming you want to delete record with id = 1
+            
+            deleteRequest.onsuccess = function(event: Event) {
+                console.log('Record deleted successfully');
+            };
+            
+            deleteRequest.onerror = function(event: Event) {
+                console.log('Error deleting record:', (event.target as any).error);
+            };
+        }
     }
 
     listRecords() {
@@ -95,7 +111,9 @@ export default class Database {
               objectStore.openCursor().onsuccess = (event) => {
                 const cursor = event.target.result;
                 if (cursor) {
-                  records.push(cursor.value);
+                  const record = cursor.value;
+                  record["key"] = cursor.key
+                  records.push(record);
                   cursor.continue();
                 } else {
                   resolve(records);
