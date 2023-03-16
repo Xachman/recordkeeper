@@ -58,9 +58,9 @@ export default function Home() {
   return (
     <Container>
       <Grid container spacing={2}>
-        <Grid item xs={4}>
+        <Grid item md={4}>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} md={4}>
           {
           monthHours > 0 ?
           <>
@@ -76,7 +76,7 @@ export default function Home() {
           <h3>No Records Yet</h3>
         }
         </Grid>
-        <Grid item xs={4}>
+        <Grid item md={4}>
         </Grid>
       </Grid>
     </Container>
