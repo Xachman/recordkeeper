@@ -58,25 +58,32 @@ export default function Home() {
   return (
     <Container>
       <Grid container spacing={2}>
-        <Grid item md={4}>
+        <Grid item sm={2} md={4}>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} sm={8} md={4}>
           {
           monthHours > 0 ?
           <>
             <h3>Month Of {monthNames[monthIndex]}</h3>
-            <div>Hours: {monthHours}</div>
-            <div>Placements: {monthPlacements}</div>
-            <div>Videos: {monthVideos}</div>
-            <div>Returns: {monthReturns}</div>
-            <div>Studies: {monthStudies}</div>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>Hours:</Grid> 
+              <Grid item xs={6}>{monthHours}</Grid>
+              <Grid item xs={4}>Placements:</Grid> 
+              <Grid item xs={6}>{monthPlacements}</Grid>
+              <Grid item xs={4}>Videos:</Grid> 
+              <Grid item xs={6}>{monthVideos}</Grid>
+              <Grid item xs={4}>Returns:</Grid> 
+              <Grid item xs={6}>{monthReturns}</Grid>
+              <Grid item xs={4}>Studies:</Grid> 
+              <Grid item xs={6}>{monthStudies}</Grid>
+            </Grid>
           </>
 
           :
           <h3>No Records Yet</h3>
         }
         </Grid>
-        <Grid item md={4}>
+        <Grid item sm={2} md={4}>
         </Grid>
       </Grid>
     </Container>
