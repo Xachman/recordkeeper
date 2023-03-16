@@ -24,6 +24,17 @@ export default function MyApp(props: MyAppProps) {
 
   React.useEffect(() => {
     new Database()
+    console.log("navi",navigator)
+    if("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then(
+        function (registration) {
+          console.log("Service Worker registration successful with scope: ", registration.scope);
+        },
+        function (err) {
+          console.log("Service Worker registration failed: ", err);
+        }
+      );
+    }
   }, [])
   React.useEffect(() => {
     switch(value) {
