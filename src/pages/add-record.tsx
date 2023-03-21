@@ -2,8 +2,9 @@ import Database from "@/Database";
 import { Box, Button, Container, FormControl, Grid, Input, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { DatePicker, DateTimeField, DateTimePicker, LocalizationProvider, MobileDateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from "dayjs";
-import { ChangeEvent, ReactNode, useState } from "react";
+import { PickerChangeHandler } from "@mui/x-date-pickers/internals/hooks/usePicker/usePickerValue";
+import dayjs, { Dayjs } from "dayjs";
+import { ChangeEvent, ReactNode, useEffect, useState } from "react";
 
 const months = [
   { value: 0, label: 'January' },
@@ -23,9 +24,8 @@ const months = [
 const AddForm = () => {
   const currentMonthIndex = new Date().getMonth();
   const [month, setMonth] = useState(currentMonthIndex);
-  const year = new Date().getFullYear();
-  const [daysInMonth, setDaysInMonth] = useState(new Date(year, month+1, 0).getDate());
-  console.log(daysInMonth)
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [daysInMonth, setDaysInMonth] = useState(new Date(year, month, 0).getDate());
   const [day, setDay] = useState(new Date().getDate())
   const [hours, setHours] = useState(0);
   const [placements, setPlacements] = useState(0);
@@ -33,6 +33,7 @@ const AddForm = () => {
   const [studies, setStudies] = useState(0);
   const [notes, setNotes] = useState("");
   const [returnVisits, setReturnVisits] = useState(0);
+  const [defaultDate, setDefaultDate] = useState(year+'-'+(month+1)+'-'+day);
 
   const inputChangeEvent = (setter: (value: any) => void) => {
     return (event: ChangeEvent<HTMLInputElement>) => {
@@ -40,15 +41,11 @@ const AddForm = () => {
     }
   }
   
-  const handleMonthChange = (event: SelectChangeEvent) => {
-    const monthChange = +event.target.value ?? currentMonthIndex
-    setMonth(monthChange)
-    setDaysInMonth(new Date(year, monthChange+1, 0).getDate())
-    setDay(1)
-  }
-
-  const handleDayChange = (event: SelectChangeEvent) => {
-    setDay(+event.target.value)
+  const handleDateChange = (date: any) => {
+    console.log("monthChange", date.format("M")-1)
+    setMonth(date.format("M")-1)
+    setDay(date.format("D"))
+    setYear(date.format("YYYY"))
   }
 
   return (
@@ -64,51 +61,24 @@ const AddForm = () => {
         }}
       >
       <FormControl>
-        <InputLabel htmlFor="Month">Month</InputLabel>
-        <Select
-          labelId="month"
-          id="month"
-          value={String(month)}
-          label="Month"
-          onChange={handleMonthChange}
-        >
-          {months.map(month => (
-            <MenuItem key={month.value} value={month.value}>
-              {month.label}
-            </MenuItem>
-          ))}
-        </Select>
+        <InputLabel htmlFor="Date">Date</InputLabel>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker onChange={handleDateChange} defaultValue={dayjs(defaultDate)} />
+        </LocalizationProvider>
       </FormControl>
-      <FormControl>
-        <InputLabel htmlFor="day">Day</InputLabel>
-        <Select
-          labelId="day"
-          id="day"
-          value={String(day)}
-          label="Day"
-          onChange={handleDayChange}
-        >
-          {[...Array(daysInMonth)].map((e, i) => {
-            const day = i+1
-            return (
-            <MenuItem key={day} value={day}>
-              {day}
-            </MenuItem>
-          )})}
-        </Select>
-      </FormControl>
-      
       <FormControl>
         <InputLabel htmlFor="hours">Hours</InputLabel>
         <Input 
         type="number"
         onChange={inputChangeEvent(setHours)}
+        inputProps={{min: 0}}
         id="hours" />
       </FormControl>
       <FormControl>
         <InputLabel htmlFor="placements">Placements</InputLabel>
         <Input 
         type="number"
+        inputProps={{min: 0}}
         onChange={inputChangeEvent(setPlacements)}
         id="placements" />
       </FormControl>
@@ -116,6 +86,7 @@ const AddForm = () => {
         <InputLabel htmlFor="videos">Videos</InputLabel>
         <Input 
         type="number"
+        inputProps={{min: 0}}
         onChange={inputChangeEvent(setVideos)}
         id="videos" />
       </FormControl>
@@ -123,6 +94,7 @@ const AddForm = () => {
         <InputLabel htmlFor="studies">Studies</InputLabel>
         <Input 
         type="number"
+        inputProps={{min: 0}}
         onChange={inputChangeEvent(setStudies)}
         id="studies" />
       </FormControl>
@@ -130,6 +102,7 @@ const AddForm = () => {
         <InputLabel htmlFor="return-visits">Return Visits</InputLabel>
         <Input 
         type="number"
+        inputProps={{min: 0}}
         onChange={inputChangeEvent(setReturnVisits)}
         id="retun-visits" />
       </FormControl>
@@ -139,7 +112,6 @@ const AddForm = () => {
         <Input 
           multiline
           rows={4}
-          type="number"
           onChange={inputChangeEvent(setNotes)}
           id="notes" />
       </FormControl>
@@ -147,8 +119,6 @@ const AddForm = () => {
         variant="contained"
         onClick={() => {
           const db = new Database()
-          console.log("pacements", placements)
-          console.log("videos", videos)
           db.addRecord(
             hours,
             year,
